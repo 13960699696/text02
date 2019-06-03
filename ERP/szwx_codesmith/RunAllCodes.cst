@@ -1,0 +1,170 @@
+﻿<%@ CodeTemplate Language="C#" TargetLanguage="C#"  Debug="true" LinePragmas="True"  ResponseEncoding="UTF-8" %>
+<%@ Assembly Name="CodeSmith.Engine" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Property Name="SavePath" Type="System.String" Default="E:\\智源恒通\\软件开发\\yihuanxin" Optional="False" %>
+<%@ Property Name="DBType" Type="DBtypeEnum" Default="mssql" Category="Context" %>
+<%@ Property Name="CodeSmithPath" Type="System.String" Default="E:\\智源恒通\\软件开发\\zhi_codesmith" Optional="False"%>
+<%@ Property Name="Database" Type="SchemaExplorer.DatabaseSchema" Optional="False" %>
+<script runat="template">
+	public enum DBtypeEnum
+	{
+		mssql,
+		oracle,
+		access
+	}
+	//产生文件的路径
+	public string getfilepath(string fileName)
+	{
+		string filepath="";
+		if(fileName.StartsWith("cust_"))
+			filepath ="cust";
+		return filepath;
+	}
+	//BLL
+	public string RunBLL()
+	{
+		CodeTemplateCompiler _compiler = new CodeTemplateCompiler(CodeSmithPath+"\\BLL.cst");
+		_compiler.Compile();
+		
+		if(_compiler.Errors.Count == 0)
+		{
+			CodeTemplate _code = _compiler.CreateInstance();
+			
+			foreach(TableSchema _table in Database.Tables)
+			{
+				if(_table.Name.Substring(0,(_table.Name.Length>=6?6:_table.Name.Length))=="aspnet")
+					continue;
+				_code.SetProperty("Table", _table);
+				
+				if(DBType ==DBtypeEnum.mssql)
+					_code.SetProperty("DBType", "mssql");
+				else if(DBType ==DBtypeEnum.access)
+					_code.SetProperty("DBType", "access");
+				else
+					_code.SetProperty("DBType", "oracle");
+					
+				string _fileName = _table.Name.Replace(" ","") + ".cs";
+				
+				if(!System.IO.Directory.Exists(SavePath + "\\BLL"))
+					System.IO.Directory.CreateDirectory(SavePath + "\\BLL");
+				
+				if(!System.IO.Directory.Exists(SavePath + "\\BLL\\"+getfilepath(_fileName)))
+					System.IO.Directory.CreateDirectory(SavePath + "\\BLL\\"+getfilepath(_fileName));
+				
+				System.IO.StreamWriter _file = new System.IO.StreamWriter(System.IO.File.Create(SavePath + "\\BLL\\" + getfilepath(_fileName)+"\\"+_fileName), System.Text.Encoding.UTF8);
+				_code.Render(_file);
+				
+				_file.Close();
+			}
+		}
+		else
+		{
+			for(int i=0; i<_compiler.Errors.Count; i++)
+				Console.Error.WriteLine(_compiler.Errors[i]);
+		}
+		
+		return "";
+	}
+	
+	//Model
+	public string RunModel()
+	{
+		CodeTemplateCompiler _compiler = new CodeTemplateCompiler(CodeSmithPath+"\\Model.cst");
+		_compiler.Compile();
+		
+		if(_compiler.Errors.Count == 0)
+		{
+			CodeTemplate _code = _compiler.CreateInstance();
+			
+			foreach(TableSchema _table in Database.Tables)
+			{
+				if(_table.Name.Substring(0,(_table.Name.Length>=6?6:_table.Name.Length))=="aspnet")
+					continue;
+				_code.SetProperty("Table", _table);
+				
+				if(DBType ==DBtypeEnum.mssql)
+					_code.SetProperty("DBType", "mssql");
+				else if(DBType ==DBtypeEnum.access)
+					_code.SetProperty("DBType", "access");
+				else
+					_code.SetProperty("DBType", "oracle");
+					
+				string _fileName = _table.Name + ".cs";
+				
+				if(!System.IO.Directory.Exists(SavePath + "\\Model"))
+					System.IO.Directory.CreateDirectory(SavePath + "\\Model");
+				
+				if(!System.IO.Directory.Exists(SavePath + "\\Model\\"+getfilepath(_fileName)))
+					System.IO.Directory.CreateDirectory(SavePath + "\\Model\\"+getfilepath(_fileName));
+				
+				System.IO.StreamWriter _file = new System.IO.StreamWriter(System.IO.File.Create(SavePath + "\\Model\\" + getfilepath(_fileName)+"\\"+_fileName), System.Text.Encoding.UTF8);
+				_code.Render(_file);
+				
+				_file.Close();
+			}
+		}
+		else
+		{
+			for(int i=0; i<_compiler.Errors.Count; i++)
+				Console.Error.WriteLine(_compiler.Errors[i]);
+		}
+		
+		return "";
+	}
+	
+	//SAL
+	public string RunSQLSAl()
+	{
+		CodeTemplateCompiler _compiler = new CodeTemplateCompiler(CodeSmithPath+"\\SqlServerDal.cst");
+		_compiler.Compile();
+		
+		if(_compiler.Errors.Count == 0)
+		{
+			CodeTemplate _code = _compiler.CreateInstance();
+			
+			foreach(TableSchema _table in Database.Tables)
+			{
+				if(_table.Name.Substring(0,(_table.Name.Length>=6?6:_table.Name.Length))=="aspnet")
+					continue;				
+				_code.SetProperty("Table", _table);
+				
+				if(DBType ==DBtypeEnum.mssql)
+					_code.SetProperty("DBType", "mssql");
+				else if(DBType ==DBtypeEnum.access)
+					_code.SetProperty("DBType", "access");
+				else
+					_code.SetProperty("DBType", "oracle");
+					
+				string _fileName = _table.Name.Replace(" ","")+ ".cs";
+				
+				if(!System.IO.Directory.Exists(SavePath + "\\SQLServerDAL"))
+					System.IO.Directory.CreateDirectory(SavePath + "\\SQLServerDAL");
+				
+				if(!System.IO.Directory.Exists(SavePath + "\\SQLServerDAL\\"+getfilepath(_fileName)))
+					System.IO.Directory.CreateDirectory(SavePath + "\\SQLServerDAL\\"+getfilepath(_fileName));
+				
+				System.IO.StreamWriter _file = new System.IO.StreamWriter(System.IO.File.Create(SavePath + "\\SQLServerDAL\\" + getfilepath(_fileName)+"\\"+_fileName), System.Text.Encoding.UTF8);
+				_code.Render(_file);
+				
+				_file.Close();
+			}
+		}
+		else
+		{
+			for(int i=0; i<_compiler.Errors.Count; i++)
+				Console.Error.WriteLine(_compiler.Errors[i]);
+		}
+		
+		return "";
+	}
+	
+</script>
+<%= RunBLL() %>
+<%= RunModel() %>
+<%= RunSQLSAl() %>
+
+
+
+
+ 

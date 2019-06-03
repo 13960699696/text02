@@ -1,0 +1,19 @@
+################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/.vs/config
+/.vs/SJERP/v15
+/BLL
+/Model
+/SJERP
+/SQLServerDAL
+/Base
+/DBUtility
+.vs/SJERP/v16/Server/sqlite3/storage.ide-wal
+.vs/SJERP/v16/Server/sqlite3/storage.ide
+.vs/SJERP/config/applicationhost.config
+UpgradeLog.htm
+.vs/SJERP/v16/Server/sqlite3/storage.ide-shm
+.vs/SJERP/v16/.suo
+.vs/SJERP/v16/Server/sqlite3/db.lock

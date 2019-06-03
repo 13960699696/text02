@@ -1,0 +1,136 @@
+﻿<%@ CodeTemplate Language="C#" TargetLanguage="C#"  Debug="true" LinePragmas="True"  ResponseEncoding="UTF-8" %>
+<%@ Assembly Name="CodeSmith.Engine" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Property Name="DBType" Type="DBtypeEnum" Default="mssql" Category="Context" %>
+<%@ Property Name="SavePath" Type="System.String" Default="E:\\智源恒通\\软件开发\\yihuanxin" Optional="False" %>
+<%@ Property Name="CodeSmithPath" Type="System.String" Default="E:\\智源恒通\\软件开发\\zhi_codesmith" Optional="False"%>
+<%@ Property Name="Table" Type="SchemaExplorer.TableSchema" Optional="False" %>
+<script runat="template">
+	public enum DBtypeEnum
+	{
+		mssql,
+		oracle,
+		access
+	}
+	//产生文件的路径
+	public string getfilepath(string fileName)
+	{
+		string filepath="";
+		if(fileName.StartsWith("cust_"))
+			filepath ="cust";
+		return filepath;
+	}
+	//BLL
+	public string RunBLL()
+	{
+		CodeTemplateCompiler _compiler = new CodeTemplateCompiler(CodeSmithPath+"\\BLL.cst");
+		_compiler.Compile();
+		
+		if(_compiler.Errors.Count == 0)
+		{
+			CodeTemplate _code = _compiler.CreateInstance();
+			_code.SetProperty("Table", Table);
+			
+			if(DBType ==DBtypeEnum.mssql)
+				_code.SetProperty("DBType", "mssql");
+			else if(DBType ==DBtypeEnum.access)
+				_code.SetProperty("DBType", "access");	
+			else
+				_code.SetProperty("DBType", "oracle");
+				
+			string _fileName = Table.Name.Replace(" ","") + ".cs";				
+			if(!System.IO.Directory.Exists(SavePath + "\\BLL"))
+				System.IO.Directory.CreateDirectory(SavePath + "\\BLL");				
+				
+			if(!System.IO.Directory.Exists(SavePath + "\\BLL\\"+getfilepath(_fileName)))
+				System.IO.Directory.CreateDirectory(SavePath + "\\BLL\\"+getfilepath(_fileName));
+				
+			System.IO.StreamWriter _file = new System.IO.StreamWriter(System.IO.File.Create(SavePath + "\\BLL\\" + getfilepath(_fileName)+"\\"+_fileName), System.Text.Encoding.UTF8);
+			_code.Render(_file);				
+			_file.Close();
+		}		
+		return "";
+	}
+	
+	//Model
+	public string RunModel()
+	{
+		CodeTemplateCompiler _compiler = new CodeTemplateCompiler(CodeSmithPath+"\\Model.cst");
+		_compiler.Compile();
+		
+		if(_compiler.Errors.Count == 0)
+		{
+			CodeTemplate _code = _compiler.CreateInstance();
+			_code.SetProperty("Table", Table);
+			
+			if(DBType ==DBtypeEnum.mssql)
+				_code.SetProperty("DBType", "mssql");
+			else if(DBType ==DBtypeEnum.access)
+				_code.SetProperty("DBType", "access");	
+			else
+				_code.SetProperty("DBType", "oracle");
+				
+			
+			string _fileName = Table.Name + ".cs";
+			
+			if(!System.IO.Directory.Exists(SavePath + "\\Model"))
+				System.IO.Directory.CreateDirectory(SavePath + "\\Model");
+			
+			if(!System.IO.Directory.Exists(SavePath + "\\Model\\"+getfilepath(_fileName)))
+					System.IO.Directory.CreateDirectory(SavePath + "\\Model\\"+getfilepath(_fileName));
+				
+			System.IO.StreamWriter _file = new System.IO.StreamWriter(System.IO.File.Create(SavePath + "\\Model\\" + getfilepath(_fileName)+"\\"+_fileName), System.Text.Encoding.UTF8);
+			_code.Render(_file);
+			
+			_file.Close();			
+		}
+		
+		return "";
+	}
+	
+	//SAL
+	public string RunSQLSAl()
+	{
+		CodeTemplateCompiler _compiler = new CodeTemplateCompiler(CodeSmithPath+"\\SqlServerDal.cst");
+		_compiler.Compile();
+		
+		if(_compiler.Errors.Count == 0)
+		{
+			CodeTemplate _code = _compiler.CreateInstance();
+			_code.SetProperty("Table", Table);
+			
+			if(DBType ==DBtypeEnum.mssql)
+				_code.SetProperty("DBType", "mssql");
+			else if(DBType ==DBtypeEnum.access)
+				_code.SetProperty("DBType", "access");	
+			else
+				_code.SetProperty("DBType", "oracle");
+				
+			string _fileName = Table.Name.Replace(" ","")+ ".cs";
+			
+			if(!System.IO.Directory.Exists(SavePath + "\\SQLServerDAL"))
+				System.IO.Directory.CreateDirectory(SavePath + "\\SQLServerDAL");
+			
+			if(!System.IO.Directory.Exists(SavePath + "\\SQLServerDAL\\"+getfilepath(_fileName)))
+					System.IO.Directory.CreateDirectory(SavePath + "\\SQLServerDAL\\"+getfilepath(_fileName));
+				
+			System.IO.StreamWriter _file = new System.IO.StreamWriter(System.IO.File.Create(SavePath + "\\SQLServerDAL\\" + getfilepath(_fileName)+"\\"+_fileName), System.Text.Encoding.UTF8);
+			_code.Render(_file);
+			
+			_file.Close();	
+
+		}
+		return "";
+	}
+	
+</script>
+<%= RunBLL() %>
+<%= RunModel() %>
+<%= RunSQLSAl() %>
+
+
+
+
+
+ 
